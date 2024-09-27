@@ -35,8 +35,9 @@ public:
     };
     explicit TransformationEstimationForColoredICP(
             double lambda_geometric = 0.968,
-            std::shared_ptr<RobustKernel> kernel = std::make_shared<L2Loss>())
-        : lambda_geometric_(lambda_geometric), kernel_(std::move(kernel)) {
+            std::shared_ptr<RobustKernel> kernel = std::make_shared<L2Loss>(),
+            const Eigen::Vector6d& dim_weights = Eigen::Vector6d::Ones())
+        : lambda_geometric_(lambda_geometric), kernel_(std::move(kernel)), dim_weights_(dim_weights) {
         if (lambda_geometric_ < 0 || lambda_geometric_ > 1.0) {
             lambda_geometric_ = 0.968;
         }
@@ -55,6 +56,7 @@ public:
     double lambda_geometric_ = 0.968;
     /// shared_ptr to an Abstract RobustKernel that could mutate at runtime.
     std::shared_ptr<RobustKernel> kernel_ = std::make_shared<L2Loss>();
+    Eigen::Vector6d dim_weights_ = Eigen::Vector6d::Ones();
 
 private:
     const TransformationEstimationType type_ =
