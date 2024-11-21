@@ -8,12 +8,14 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <Eigen/Eigen>
 #include <memory>
 #include <string>
 #include <utility>
 #include <vector>
 
 #include "open3d/pipelines/registration/RobustKernel.h"
+#include "open3d/utility/Eigen.h"
 
 namespace open3d {
 
@@ -121,8 +123,9 @@ public:
     /// \brief Constructor that takes as input a RobustKernel \param kernel Any
     /// of the implemented statistical robust kernel for outlier rejection.
     explicit TransformationEstimationPointToPlane(
-            std::shared_ptr<RobustKernel> kernel)
-        : kernel_(std::move(kernel)) {}
+            std::shared_ptr<RobustKernel> kernel,
+            const Eigen::Vector6d &dim_weights = Eigen::Vector6d::Ones())
+        : kernel_(std::move(kernel)), dim_weights_(dim_weights) {}
 
 public:
     TransformationEstimationType GetTransformationEstimationType()
@@ -140,6 +143,7 @@ public:
 public:
     /// shared_ptr to an Abstract RobustKernel that could mutate at runtime.
     std::shared_ptr<RobustKernel> kernel_ = std::make_shared<L2Loss>();
+    Eigen::Vector6d dim_weights_ = Eigen::Vector6d::Ones();
 
 private:
     const TransformationEstimationType type_ =

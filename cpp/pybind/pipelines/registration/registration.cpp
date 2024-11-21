@@ -299,13 +299,19 @@ Sets :math:`c = 1` if ``with_scaling`` is ``False``.
                            std::move(kernel));
                }),
                "kernel"_a)
+            .def(py::init([](std::shared_ptr<RobustKernel> kernel, const Eigen::Vector6d &dim_weights) {
+                   return new TransformationEstimationPointToPlane(std::move(kernel), dim_weights);
+               }),
+               "kernel"_a, "dim_weights"_a)
             .def("__repr__",
                  [](const TransformationEstimationPointToPlane &te) {
                      return std::string("TransformationEstimationPointToPlane");
                  })
             .def_readwrite("kernel",
                            &TransformationEstimationPointToPlane::kernel_,
-                           "Robust Kernel used in the Optimization");
+                           "Robust Kernel used in the Optimization")
+            .def_readonly("dim_weights", &TransformationEstimationPointToPlane::dim_weights_,
+                          "Weights for the 6 dimensions");
 
     // open3d.registration.TransformationEstimationForColoredICP :
     auto te_col = static_cast<py::class_<
@@ -317,7 +323,19 @@ Sets :math:`c = 1` if ``with_scaling`` is ``False``.
             te_col);
     py::detail::bind_copy_functions<TransformationEstimationForColoredICP>(
             te_col);
-    te_col.def(py::init([](double lambda_geometric,
+    te_col.def(py::init([](double lambda_geometric, std::shared_ptr<RobustKernel> kernel, const Eigen::Vector6d& dim_weights) {
+                   return new TransformationEstimationForColoredICP(
+                           lambda_geometric, std::move(kernel), dim_weights);
+               }),
+               "lambda_geometric"_a, "kernel"_a, "dim_weights"_a)
+            .def(py::init([](std::shared_ptr<RobustKernel> kernel, const Eigen::Vector6d& dim_weights) {
+                    auto te = TransformationEstimationForColoredICP();
+                    te.kernel_ = std::move(kernel);
+                    te.dim_weights_ = dim_weights;
+                    return te;
+                }),
+                "kernel"_a, "dim_weights"_a)
+            .def(py::init([](double lambda_geometric,
                            std::shared_ptr<RobustKernel> kernel) {
                    return new TransformationEstimationForColoredICP(
                            lambda_geometric, std::move(kernel));
@@ -347,7 +365,9 @@ Sets :math:`c = 1` if ``with_scaling`` is ``False``.
                     "lambda_geometric")
             .def_readwrite("kernel",
                            &TransformationEstimationForColoredICP::kernel_,
-                           "Robust Kernel used in the Optimization");
+                           "Robust Kernel used in the Optimization")
+            .def_readonly("dim_weights", &TransformationEstimationForColoredICP::dim_weights_,
+                          "Weights for the 6 dimensions");
 
     // open3d.registration.TransformationEstimationForGeneralizedICP:
     // TransformationEstimation

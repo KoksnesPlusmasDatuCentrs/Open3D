@@ -70,8 +70,8 @@ Eigen::Matrix4d TransformationEstimationPointToPlane::ComputeTransformation(
         const Eigen::Vector3d &nt = target.normals_[corres[i][1]];
         r = (vs - vt).dot(nt);
         w = kernel_->Weight(r);
-        J_r.block<3, 1>(0, 0) = vs.cross(nt);
-        J_r.block<3, 1>(3, 0) = nt;
+        J_r.block<3, 1>(0, 0) = vs.cross(nt) * dim_weights_(0, 3);
+        J_r.block<3, 1>(3, 0) = nt * dim_weights_(3, 6);
     };
 
     Eigen::Matrix6d JTJ;

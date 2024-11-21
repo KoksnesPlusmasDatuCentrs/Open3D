@@ -1,3 +1,16 @@
+## Interum Buildstructions
+
+vs dev prompt:
+
+    cd <project_dir>
+    git submodule update --init --recursive
+    
+    mkdir build
+    cd build
+    
+    cmake -G "Visual Studio 16 2019" -A x64 -DBUILD_AZURE_KINECT=ON ..
+    cmake --build . --config Release --target AzureKinectMKVReader
+    
 <p align="center">
 <img src="https://raw.githubusercontent.com/isl-org/Open3D/main/docs/_static/open3d_logo_horizontal.png" width="320" />
 </p>
